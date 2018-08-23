@@ -1,6 +1,6 @@
 <template>
     <div id="login">
-        <router-link style="margin-top: 2vh;" to='/'><i class="iconfont icon-shangjiantou"  ></i></router-link>
+        <router-link style="margin-top:2vh;display: block;" to='/'><i class="iconfont icon-shangjiantou"  ></i></router-link>
 
         <div>
             <Upload class="upload"  v-on:imageUrl='getAvatar($event)'></Upload>
@@ -28,7 +28,7 @@
                 username:null,
                 password:null,
                 password1:null,
-                avatar:'src/client/static/img/avatar.png'
+                avatar:'http://pdsvnon20.bkt.clouddn.com/lyttonThu Aug 23 2018 09:44:57 GMT+0800 (中国标准时间)43.jpg'
             }
         },
         methods: {

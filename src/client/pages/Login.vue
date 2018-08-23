@@ -1,11 +1,9 @@
 <template>
     <div id="login">
-        <router-link style="margin-top: 2vh;" to='/'><i class="iconfont icon-shangjiantou"  ></i></router-link>
+        <router-link style="margin-top:2vh;display:block;" to='/'><i class="iconfont icon-shangjiantou"  ></i></router-link>
 
-        <div style="    font-size: 5vh;
-    margin-top: 20vh;" >
-            <!-- <Upload class="upload"></Upload> -->
-            Login　Page
+        <div style="font-size: 5vh;margin-top:6vh;" >
+            <img src="../static/img/avatar.png" alt="">
         </div>
         <div style="margin-top: 15vh;"><input type="text" v-model="username" placeholder="Username/Phone"></div>
         <div><input type="password" v-model="password" placeholder="Password"></div>

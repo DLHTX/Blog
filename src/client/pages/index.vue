@@ -1,5 +1,5 @@
 <template>
-<div>
+<div style="background-color: rgba(204, 204, 204, 0.22);">
     
     <div class="app full-height" @click='noActive()'>
       <div class="appbar">
@@ -13,7 +13,7 @@
     <div class="typebar" :class="{SwipeActive:isSwipeActive}" >
           <span 
           v-for="(item,index) in classArr" 
-          @click="result(index)"
+          @click="result(item,index)"
           :key="index"
           :class="resultNum === index?'typebarActive':''"
           >{{item}}</span>
@@ -22,29 +22,60 @@
       <div class="content" 
         v-swipeup="{fn:swipeup,name:'上滑'}"
         v-swipedown="{fn:swipedown,name:'下滑'}"
+       
+
         v-infinite-scroll="loadMore" 
         infinite-scroll-disabled="moreLoading" 
         infinite-scroll-distance="0" 
         infinite-scroll-immediate-check="false"
         >
-        <div class="item" v-for="blog in blogs" :key='blog.id'>
+        <div class="item" v-for="(blog,index) in blogs" :key='blog.id' 
+		 v-longtap="{fn:longtap,deleteBox:index}"
+		 >
           <div class="userinfo">
              <img :src="blog.avatar" alt="">
              <span style="rgb(70, 70, 70);">{{blog.username}}</span>
              <span style="justify-self:end;rgb(70, 70, 70);">{{friendlyDate(blog.createdAt)}}</span>
           </div>
-          <div class="title" style="padding: 0 2vh;color: black;font-weight: 600;">
+          <div class="title">
            {{blog.title}}
           </div>
-          <div style="padding: 0 2vh;rgb(70, 70, 70);">
-            {{blog.content}}
-          </div>
+
+          <div class="blogContent">{{blog.content}}</div>
+
           <div class="icon" >
-            <i class="iconfont icon-love"  @click="love()"
-              :class="{loveActive:isLoveActive}"
+            <i class="iconfont icon-love"  
+              @click="love(index,blog.id)"
+              :key="index"
+              :class="{ loveActive: loveSelect.indexOf(index) > -1 }"
             ></i><span style="    align-self: center;">{{blog.love}}</span>
             <i class="iconfont icon-share" style="color: rgb(128, 128, 128);justify-self: end;"></i>
           </div>
+		  <div class="deleteBox" v-show="deleteBox === index" @click="deleteMessage(index)">
+			  <span>Detele This Message</span>
+		  </div>
+
+ <social-sharing url="https://vuejs.org/"
+                      title="The Progressive JavaScript Framework"
+                      description="Intuitive, Fast and Composable MVVM for building interactive interfaces."
+                      quote="Vue is a progressive framework for building user interfaces."
+                      hashtags="vuejs,javascript,framework"
+                      twitter-user="vuejs"
+                      inline-template>
+  <div>
+      <network network="email">
+          <i class="fa fa-envelope"></i> Email
+      </network>
+      <network network="googleplus">
+        <i class="fa fa-google-plus"></i> Google +
+      </network>
+      <network network="weibo">
+        <i class="fa fa-weibo"></i> Weibo
+      </network> 
+
+  </div>
+</social-sharing>
+
         </div>
 
         <!--底部判断是加载图标还是提示“全部加载”-->
@@ -96,7 +127,11 @@ export default {
       allLoaded: false,
       totalNum: 0,
       pageSize: 5,
-      pageNum: 1,
+	  pageNum: 1,
+	  //////////////////////
+	  loveSelect:[],
+	  deleteBox:null,
+	  
     }
   },
   created(){
@@ -106,21 +141,6 @@ export default {
       })
   },
   methods: {
-    // ...mapActions(['register']),
-    onRegister() {
-      // this.$axios.post('/auth/register',{username:'dlhtt',password:'1234'}).then(res=>{
-      //     console.log(res)
-      // })
-      // this.$axios.post('/auth/login',{username:'dhty',password:'123456'}).then(res=>{
-      //     console.log(res)
-      // })
-      // this.$axios.post('/auth/checkLogin').then(res=>{
-      //   console.log(res)
-      // })
-      // this.$axios.post('/auth/creatBlog').then(res=>{
-      //     console.log(res)
-      // })
-    },
     onActive(){
       console.log('click')
       event.stopPropagation(); 
@@ -135,22 +155,49 @@ export default {
       console.log('change!')
       this.isActive = data
     },
-    result(index){
-      this.num = index
-    },
-    love(){
-      if(!this.isLoveActive){
-         this.isLoveActive = true
+    result(item,index){
+	  this.num = index
+	  function compare(property){
+			return function(a,b){
+				var value1 = a[property];
+				var value2 = b[property];
+				return value2 - value1;
+			}
+		}
+	  if(item === 'New'){
+			this.blogs = this.blogs.sort(compare('createdAt'))
+			console.log(this.blogs)
+		}else{
+		 	this.blogs = this.blogs.sort(compare('love'))
+	    }
+	},
+    love(index,id,lovenum){
+		console.log(event.currentTarget)
+      if(this.loveSelect.indexOf(index) > -1){
+		this.loveSelect.splice(this.loveSelect.indexOf(index),1)
+		this.$axios.post('/auth/noloveBlog',{id:id}).then(res=>{
+			this.blogs[index].love--
+        })
       }else{
-        this.isLoveActive = false
+        this.loveSelect.push(index)
+        console.log(this.loveSelect)
+        this.$axios.post('/auth/loveBlog',{id:id}).then(res=>{
+			this.blogs[index].love++
+        })
       }
+     
 
+   
     },
     swipeup(){
       this.isSwipeActive = true
     },
     swipedown(){
       this.isSwipeActive = false
+    },
+    longtap(index){
+		this.deleteBox = index.deleteBox
+		console.log(this.deleteBox)
     },
     loadMore() {
         console.log('loadMore')
@@ -167,18 +214,14 @@ export default {
         this.$axios.post('/auth/findAllBlog',{page:this.pageNum,pageSize:this.pageSize}).then(res=>{
             console.log(res)
             this.blogs = this.blogs.concat(res.data.rows)
-            this.allLoaded = res.data.rows.length <= this.pageSize;
+            this.allLoaded = res.data.rows.length < this.pageSize;
             this.moreLoading = this.allLoaded;
         })
-      
-        // this.$http.post("请求后台数据的接口",Object.assign({pageNum:this.pageNum},this.params)).then((res) => {
-        //   if(res.sData && res.sData.list){
-        //     this.list = this.list.concat(res.sData.list);
-            // this.allLoaded = this.debtList.length==this.totalNum;
-        //   }
-        //   this.moreLoading = this.allLoaded;
-        // });
-      }
+	},
+	deleteMessage(index){
+		this.deleteBox = null
+	  	this.$toast({ message:'This is not your message',duration:1000})
+	}
   },
   computed:{
     resultNum(){
@@ -199,7 +242,7 @@ export default {
 <style lang='less' >
 @keyframes love{
   0% {font-size:2vh;}
-  50%{font-size: 2.5vh;}
+  50%{font-size: 2.2vh;}
   100% {font-size:2vh;}
 }
 .SwipeActive{
@@ -223,12 +266,12 @@ export default {
 .loveActive{
   color: rgb(255, 109, 109)!important;
   transition:all .2s!important;
-  animation: love .6s  ease  1;
+  animation: love .4s  ease  1;
 }
 html{
   height: 100%;
   font-size: 2vh;
-  font-family:'Raleway';
+  font-family:'SegoeWP';
 }
 body {
   // display: flex;
@@ -236,8 +279,9 @@ body {
   // justify-content: center;
   height: 100%;
   margin: 0;
+  user-select:none!important;
   padding: 0;
-  background-color: #f1f7fa73;
+
 }
 a{
   text-decoration: none;
@@ -257,7 +301,7 @@ a{
     font-size: 4vh!important;
     text-align: center;
     line-height: 10vh;
-    font-family:'Raleway';
+  	font-family:'SegoeWP';
     .icon-zk{
       float: left;
       font-size: 2.5vh;
@@ -283,10 +327,10 @@ a{
     font-size: 2vh!important;
     text-align: center;
     line-height: 10vh;
-    font-family:'Raleway';
-    box-shadow: 0 8px 10px -5px #00000014;
-    -moz-box-shadow: 0 8px 10px -5px #00000014;
-	  -webkit-box-shadow: 0 8px 10px -5px #00000014;
+  	font-family:'SegoeWP';
+    // box-shadow: 0 8px 10px -5px #00000014;
+    // -moz-box-shadow: 0 8px 10px -5px #00000014;
+	  // -webkit-box-shadow: 0 8px 10px -5px #00000014;
     transition: all .2s;
     span{
       padding: .5vh 2vh;
@@ -294,7 +338,7 @@ a{
       margin: 0 2vh;
       }
     }
-  .content{
+  	.content{
     overflow: scroll;
     height: 80%;
     width: 100%;
@@ -306,10 +350,29 @@ a{
       margin: auto;
       border-radius: 4px;
       background-color: white;
-      margin-top: 2vh;
-      box-shadow: 0 0 36px -1px #0000001f;
-      -moz-box-shadow:  0 0 36px -1px #0000001f;
-	    -webkit-box-shadow: 0 0 36px -1px #0000001f;
+	  margin-top: 2vh;
+	  position:relative;
+      // box-shadow: 0 0 36px -1px #0000001f;
+      // -moz-box-shadow:  0 0 36px -1px #0000001f;
+		// -webkit-box-shadow: 0 0 36px -1px #0000001f;
+	.deleteBox{
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		border-radius: 4px;
+		color: #ffffff;
+		font-size: 2vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background: #444444c2;
+			span{
+				padding: 1vh 3vh;
+				background: #ff6262;
+				border-radius: 41px;
+			}
+		}
       .userinfo{
         height: 8vh;
         font-size: 1.5vh;
@@ -327,8 +390,24 @@ a{
         span{
           align-self: center;
         }
-
-      }
+	  }
+	  .title{
+		padding: 0 2vh;
+		color: black;
+		font-weight: 500;
+		overflow: hidden;
+    	text-overflow: ellipsis;
+    	white-space: nowrap;
+	  }
+	  .blogContent{
+		padding: 0 2vh;
+		color: #424242;
+		line-height: 20px;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+		overflow: hidden;
+	  }
       .icon{
         display: grid;
         grid-template-columns: 5% 10% 85%;

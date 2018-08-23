@@ -133,6 +133,26 @@ router.post('/findAllBlog',(req,res,next)=>{
         })
 })
 
+let love = 1
+router.post('/loveBlog',(req,res,next)=>{
+    let id = req.body.id
+    Blog.findById(id).then(blog=>{
+        //让其自增
+        blog.increment('love').then(()=>{
+            res.send({status:0 ,msg:'点赞成功'})
+        })
+    })
+})
+
+router.post('/noloveBlog',(req,res,next)=>{
+    let id = req.body.id
+    Blog.findById(id).then(blog=>{
+        //让其自减
+        blog.decrement('love').then(()=>{
+            res.send({status:0 ,msg:'点赞成功'})
+        })
+    })
+})
 
 // router.post('/editpassword', function(req, res, next) {
 //         var username = req.body.username

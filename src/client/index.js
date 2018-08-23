@@ -10,6 +10,7 @@ import Friendly from './lib/friendly'
 
 import ElementUI from 'element-ui';
 import MintUI from 'mint-ui';
+import Share from 'vue-social-sharing'
 
 Vue.config.debug = true
 Vue.config.productionTip = false
@@ -19,6 +20,7 @@ Vue.use(Swipe)
 Vue.use(ElementUI);
 Vue.use(MintUI);
 Vue.use(Friendly);
+Vue.use(Share);
 
 
 // this.$loading('loading...');

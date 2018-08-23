@@ -7,16 +7,16 @@ function friendlyDate(datsStr) {
   
     switch (true) {
       case space < 60000:
-        str = '刚刚'
+        str = ' Just now'
         break
       case space < 1000*3600:
-        str = Math.floor(space/60000) + '分钟前'
+        str = Math.floor(space/60000) + ' minutes ago'
         break
       case space < 1000*3600*24:
-        str = Math.floor(space/(1000*3600)) + '小时前'
+        str = Math.floor(space/(1000*3600)) + ' hours ago'
         break
       default:
-        str = Math.floor(space/(1000*3600*24)) + '天前'
+        str = Math.floor(space/(1000*3600*24)) + ' day ago'
     }
     return str
   }
