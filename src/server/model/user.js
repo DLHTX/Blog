@@ -25,7 +25,7 @@ var sequelize = new Sequelize(undefined,undefined, undefined, {
 let User = sequelize.define('user',{
         username: Sequelize.STRING,//用户名
         password: Sequelize.STRING,//密码 字符串
-        userIcon:Sequelize.STRING,//头像
+        avatar:Sequelize.STRING,//头像
     },
     {
         tableName: 'user',
@@ -34,15 +34,20 @@ let User = sequelize.define('user',{
 });
 
 let Blog = sequelize.define('blog',{
-        userId: Sequelize.INTEGER,//
+        username: Sequelize.STRING,//用户名
+        avatar:Sequelize.STRING,//头像
         title: Sequelize.STRING,//
         content:Sequelize.STRING,//
+        love: Sequelize.INTEGER,
     },
     {
         tableName: 'blog',
         freezeTableName: true,
         timestamps: true
 });
+
+//指定User和User_relation的关系为1：1的关系，设定目标为frendid，即查询中 userid = frendid
+// User.belongsTo(Blog,{foreignKey:'userId'});
 // User.sync({force:true}) 
 
 //清除表 定义新表之前必须执行！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
@@ -65,20 +70,20 @@ let Blog = sequelize.define('blog',{
 //     console.log(articles)
 // });
 
-// User.create({username:"dhty", password:"123456"})
+// User.create({username:"dhty", password:"123456",avatar:'ssss'})
 
 // //username role password对应相应的字段名
 
 
-User.findAll({raw: true}).then(function(articles) {
-    console.log(articles)
-});
+// User.findAll({raw: true}).then(function(articles) {
+//     console.log(articles)
+// });
 
 // Blog.sync({force:true}) 
 // Blog.create({userId:1, title:"我是blog",content:'我是内容'})
-Blog.findAll({raw: true}).then(function(articles) {
-    console.log(articles)
-});
+// Blog.findAll({raw: true}).then(function(articles) {
+//     console.log(articles)
+// });
 
 /*Userlove.create({username:"d132432", love:"123456", role:0})*/
 /*

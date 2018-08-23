@@ -7,8 +7,11 @@ var session = require('express-session');
 // var passport = require('passport');//passport模块专门处理登录
 // var superagent = require('superagent');
 // var cheerio = require('cheerio');
+const qnconfig = require('./imgServe')//引入七牛云配置
 
-
+router.get('/token',(req,res,next) =>{
+    res.status(200).send(qnconfig.uploadToken)
+})
 // router.get('/log', function(req, res, next) {
 //     res.render('log', { title: 'Login' });
 // });
@@ -26,21 +29,20 @@ var session = require('express-session');
 router.post('/register', function(req, res, next) {
   var username = req.body.username
   var password = req.body.password
+  let avatar = req.body.avatar
 
     User.findAll({raw:true, where:{username:username}}).then(function(e){
-        if(e[0] === undefined ){
-            User.create({username:username , password:password ,love:'1388661'}).then(function(){
-                res.send({status:0 ,msg: "注册成功"})
-            }).catch(function () {
-                res.send({status:1 , errorMsg:'数据库出错(添加)'})
-            })
-        }else{
-            res.send({status:2})
-        }
-    })
+            if(e[0] === undefined ){
+                User.create({username:username,password:password,avatar:avatar}).then(function(){
+                    res.send({status:0 ,msg: "注册成功"})
+                }).catch(function () {
+                    res.send({status:1 , errorMsg:'数据库出错(添加)'})
+                })
+            }else{
+                res.send({status:2})
+            }
+        })
 });
-
-
 
 router.post('/login', function(req, res, next){
     var username = req.body.username
@@ -62,7 +64,8 @@ router.post('/login', function(req, res, next){
                 console.log('success')
                 req.session.user = {
                     username : username,
-                    userId: userinfo[0].id
+                    userId: userinfo[0].id,
+                    avatar:userinfo[0].avatar
                 }
                 //先设置session 再进行页面跳
                 res.send({status : 0, msg : "登陆成功",userInfo:req.session.user})
@@ -77,22 +80,24 @@ router.post('/login', function(req, res, next){
 })
 
 router.post('/checkLogin',(req,res,next)=>{
-    if(req.session){
-        res.send({status:0,mag:'已登录',userInfo:req.session.user})
+    if(req.session.user){
+        res.send({status:0,msg:'已登录',userInfo:req.session.user })
     }else{
-        res.send({status:1,mag:'还未登录'})
+        res.send({status:1,msg:'还未登录'})
     }
 })
+
+router.post('/logout', function(req, res) {
+    req.session.destroy();
+    // res.redirect('/');
+    res.send({status:0})
+});
 
 
 
 router.post('/creatBlog',(req,res,next)=>{
-    // let Bloginfo = {
-    //     userId:res.body.userId,
-    //     title:res.body.title,
-    //     content:res.body.content,
-    // }
-    Blog.create({userId:1 , title:'我是标题啊' ,content:'1388661'}).then(function(){
+    let Bloginfo = req.body.BlogInfo
+    Blog.create(Bloginfo).then(function(){
         res.send({status:0 ,msg: "添加成功"})
     }).catch(function () {
         res.send({status:1 , errorMsg:'数据库出错(添加)'})
@@ -103,15 +108,15 @@ router.post('/findMyBlog',(req,res,next)=>{
     // let Bloginfo = {
     //     userId:res.body.userId,
     // }
-    Blog.findAll({raw : true,where:{userId:1}})
+    Blog.findAll({raw :true,where:{userId:1}})
     .then(function(Bloginfo){
             res.send({status:0,msg:'查询成功！',Bloginfo})
     })
 })
 
 router.post('/findAllBlog',(req,res,next)=>{
-    let page = 2 
-    let pageSize = 3
+    let page = req.body.page
+    let pageSize = req.body.pageSize
     Blog.findAndCountAll({
         offset:(page - 1) * pageSize,
         //开始的数据索引，比如当page=2 时offset=10 ，
@@ -120,12 +125,14 @@ router.post('/findAllBlog',(req,res,next)=>{
         limit:pageSize//每页限制返回的数据条数
     })
         .then(blog =>{
+            console.log(blog)
             if(blog.length!=0){
-                console.log(blog)
-                res.send({status:0,total:blog.count,blog})
-            }
+                console.log('blogs:'+blog.rows)
+                res.send({status:0,total:blog.count,rows:blog.rows})
+        }
         })
 })
+
 
 // router.post('/editpassword', function(req, res, next) {
 //         var username = req.body.username
@@ -247,11 +254,7 @@ router.post('/findAllBlog',(req,res,next)=>{
 
 
 
-// router.get('/logout', function(req, res) {
-//     req.session.destroy();
-//     res.redirect('/');
-//     /*res.send({status:0})*/
-// });
+
 
 // router.get('/search', function(req, res, next) {
 //     res.render('search', { title: 'Express' });

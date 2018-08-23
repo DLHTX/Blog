@@ -1,0 +1,143 @@
+<template>
+<div class="slide" @click="stopPropagation()" :style="`left:${noActive.left};`">
+    <div class="login" v-if="isLogin">
+        <img :src= "userInfo.avatar" alt="">
+        <router-link to="/login"  class="loginBtn">{{userInfo.username}}</router-link>
+    </div>
+
+     <div class="login" v-if="!isLogin">
+        <img src= "../static/img/avatar.png" alt="">
+        <router-link to="/login"  @mouseover.native="noActive()" class="loginBtn">登录</router-link>
+    </div>
+
+    <div class="icon">
+        <div class="fabu"  @click="goCreate()">
+            <i class="iconfont icon-fabu"></i>
+            <span>发布</span>
+            <i class="iconfont icon-youjiantou" style="float:right;"></i>
+        </div>
+        <div class="pinglun">
+            <i class="iconfont icon-pinglun"></i>
+            <span>评论</span> 
+            <i class="iconfont icon-youjiantou" style="float:right;"></i>
+        </div>
+        <div class="shoucang">
+            <i class="iconfont icon-shoucang"></i>
+            <span>收藏</span>
+            <i class="iconfont icon-youjiantou" style="float:right;"></i>
+        </div>
+        <div class="zhuxiao" v-if="isLogin" @click="logout()">
+            <i class="iconfont icon-logout" style="color: #ff7979;"></i>
+            <span  style="color: #ff7979;">注销</span>
+            <i class="iconfont icon-youjiantou" style="float:right; color: #ff7979;"></i>
+        </div>
+
+
+    </div>
+
+
+ </div>
+</template>
+
+<script>
+export default {
+    name: 'Slide',
+    // props:[
+    //     'isLogin','userInfo'
+    // ],
+    data(){
+        return{
+            Active:false,
+            isLogin:false,
+            userInfo:null
+        }
+    },
+    created(){
+          this.$axios.post('/auth/checkLogin').then(res=>{
+          console.log(res)
+          if(res.data.status === 0 ){
+            this.isLogin = true
+            this.userInfo = res.data.userInfo
+          }
+      })
+    },
+    methods:{
+      stopPropagation(){
+        event.stopPropagation(); 
+      },
+      logout(){
+            this.$axios.post('/auth/logout').then(res=>{
+                console.log('注销成功')
+                if(res.data.status === 0 ){
+                     this.isLogin = false
+                     this.$toast({ message:'注销成功',duration:1000})
+                     this.$emit('noActive',this.Active)
+                     this.$router.push('/')
+                }else{
+                     this.$toast({ message:'注销失败',duration:1000})
+                }
+               
+            })
+      },
+      noActive(){
+          this.$emit('noActive',this.Active)
+          //通过this.$emit实现子组件改变父组件的值！！！！！！！！
+      },
+      goCreate(){
+          this.$router.push({name:'create',params:{userInfo:this.userInfo}})
+      }
+    }
+}
+</script>
+
+<style lang='less' scoped>
+    .slide{
+            height: 100vh;
+        width:80%;
+        background-color: white;
+        position: absolute;
+        box-shadow: 0 0 31px -8px #0e0e0e4a;
+        -moz-box-shadow:0 0 31px -8px #0e0e0e4a;
+	    -webkit-box-shadow:0 0 31px -8px #0e0e0e4a;
+
+        top: 0;
+        left: -90%;
+        transition:all .2s;
+        opacity: 0;
+        .login{
+            font-family:'Raleway';
+            height: 20vh;
+            display: grid;
+            img{
+                height: 10vh;
+                width: 10vh;
+                border-radius: 50%;
+                justify-self: center;
+                align-self: center;
+            }
+            .loginBtn{
+                text-decoration: none;
+                color: #969696;
+                padding: 0.5vh 6vh;
+                border: 1px solid #afafaf;
+                border-radius: 41px;
+                font-size: 1.5vh;
+                justify-self: center;
+                align-self: center;
+            }
+        }
+        .icon{
+            padding: 1vh 3vh;
+            div{
+                font-size: 2vh;
+                height: 6vh;
+                line-height: 6vh;
+                border-bottom: 1px solid #efefef;
+                i{
+                  font-size: inherit;
+                  color: #408474;
+                }
+            }
+        }
+    }
+</style>

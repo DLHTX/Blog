@@ -16,15 +16,17 @@ import config from '../../build/webpack.dev.conf'
 
 const app = express()
 
+
 // 引入history模式让浏览器进行前端路由页面跳转
 app.use(history())
-
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 app.use(logger('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
+
+
 
 app.use(session({secret: 'sessionsecret'}));//开启seesion放在auth之前
 

@@ -12,7 +12,10 @@
   "license": "MIT",
   "dependencies": {
     "babel-runtime": "^6.23.0",
+    "element-ui": "^2.4.6",
     "express-session": "^1.15.6",
+    "mint-ui": "^2.2.13",
+    "qiniu": "^7.2.1",
     "sequelize": "^4.38.0",
     "sqlite3": "^4.0.2",
     "vue": "^2.5.13",

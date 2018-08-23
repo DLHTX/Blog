@@ -5,15 +5,20 @@ import Router from 'vue-router'
 import store from './../store/store'
 
 // 导入相应的子组件
-import Hello from './../components/Hello'
-import index from './../pages/index/template'
+import Login from './../pages/Login.vue'
+import index from './../pages/index.vue'
+import Register from './../pages/Register.vue'
+import create from './../pages/create.vue'
+
 Vue.use(Router)
 
 var router = new Router({
   mode: 'history',
   routes: [
-    { name: 'hello', path: '/hello', component: Hello },
-    { name: 'index', path: '/', component: index }
+    { name: 'login', path: '/login', component: Login },
+    { name: 'Register', path: '/register', component: Register },
+    { name: 'index', path: '/', component: index },
+    { name: 'create', path: '/create', component: create },
   ]
 })
 
