@@ -22,8 +22,6 @@
       <div class="content" 
         v-swipeup="{fn:swipeup,name:'上滑'}"
         v-swipedown="{fn:swipedown,name:'下滑'}"
-       
-
         v-infinite-scroll="loadMore" 
         infinite-scroll-disabled="moreLoading" 
         infinite-scroll-distance="0" 
@@ -31,17 +29,18 @@
         >
         <div class="item" v-for="(blog,index) in blogs" :key='blog.id' 
 		 v-longtap="{fn:longtap,deleteBox:index}"
+
 		 >
           <div class="userinfo">
              <img :src="blog.avatar" alt="">
              <span style="rgb(70, 70, 70);">{{blog.username}}</span>
-             <span style="justify-self:end;rgb(70, 70, 70);">{{friendlyDate(blog.createdAt)}}</span>
+             <span style="justify-self:end;rgb(70, 70, 70);">{{friendlyDate(blog.updatedAt)}}</span>
           </div>
           <div class="title">
            {{blog.title}}
           </div>
 
-          <div class="blogContent">{{blog.content}}</div>
+          <div class="blogContent" 	@click="goBlogDetail()">{{blog.content}}</div>
 
           <div class="icon" >
             <i class="iconfont icon-love"  
@@ -55,27 +54,26 @@
 			  <span>Detele This Message</span>
 		  </div>
 
- <social-sharing url="https://vuejs.org/"
-                      title="The Progressive JavaScript Framework"
-                      description="Intuitive, Fast and Composable MVVM for building interactive interfaces."
-                      quote="Vue is a progressive framework for building user interfaces."
-                      hashtags="vuejs,javascript,framework"
-                      twitter-user="vuejs"
-                      inline-template>
-  <div>
-      <network network="email">
-          <i class="fa fa-envelope"></i> Email
-      </network>
-      <network network="googleplus">
-        <i class="fa fa-google-plus"></i> Google +
-      </network>
-      <network network="weibo">
-        <i class="fa fa-weibo"></i> Weibo
-      </network> 
+		<!-- <social-sharing url="https://vuejs.org/"
+							title="The Progressive JavaScript Framework"
+							description="Intuitive, Fast and Composable MVVM for building interactive interfaces."
+							quote="Vue is a progressive framework for building user interfaces."
+							hashtags="vuejs,javascript,framework"
+							twitter-user="vuejs"
+							inline-template>
+								<div>
+									<network network="email">
+										<i class="fa fa-envelope"></i> Email
+									</network>
+									<network network="googleplus">
+										<i class="fa fa-google-plus"></i> Google +
+									</network>
+									<network network="weibo">
+										<i class="fa fa-weibo"></i> Weibo
+									</network> 
 
-  </div>
-</social-sharing>
-
+								</div>
+		</social-sharing> -->
         </div>
 
         <!--底部判断是加载图标还是提示“全部加载”-->
@@ -84,13 +82,9 @@
             <span v-show="allLoaded">No more data..</span>
         </div>
     
-
       </div>
 
-      <Slide id="slide" 
-      :class="{activeClass:isActive}" 
-      v-on:noActive='changeActive($event)'
-      ></Slide>
+      <Slide id="slide" :class="{activeClass:isActive}" v-on:noActive='changeActive($event)'></Slide>
     </div>
      <router-view></router-view> 
   </div>
@@ -113,6 +107,7 @@ export default {
   components: { 
     Slide
   },
+  inject:['reload'],
   data () {
     return {
       isActive:false,
@@ -127,56 +122,64 @@ export default {
       allLoaded: false,
       totalNum: 0,
       pageSize: 5,
-	  pageNum: 1,
-	  //////////////////////
-	  loveSelect:[],
-	  deleteBox:null,
-	  
+      pageNum: 1,
+      //////////////////////
+      loveSelect:[],
+      deleteBox:null,
+      findBy:'findAllBlog'
     }
   },
   created(){
-      this.$axios.post('/auth/findAllBlog',{page:this.pageNum,pageSize:this.pageSize}).then(res=>{
-          console.log(res)
-          this.blogs = res.data.rows 
-      })
+      this.getAllblog()
   },
   methods: {
+    getAllblog(){
+      this.$axios.post('/auth/' + this.findBy,{page:this.pageNum,pageSize:this.pageSize}).then(res=>{
+          console.log(res)
+          this.blogs = res.data.rows
+      })
+    },
+    initLoadingDate(){
+      this.queryLoading=false
+      this.moreLoading = false
+      this.allLoaded = false
+      this.totalNum =0
+      this.pageSize = 5
+      this.pageNum = 1
+    },
     onActive(){
-      console.log('click')
       event.stopPropagation(); 
-       this.isActive = true;
+      this.isActive = true;
     },
     noActive(){
-       console.log('click')
       event.stopPropagation(); 
-       this.isActive = false;
+      this.isActive = false;
     },
     changeActive(data){
       console.log('change!')
       this.isActive = data
     },
     result(item,index){
-	  this.num = index
-	  function compare(property){
-			return function(a,b){
-				var value1 = a[property];
-				var value2 = b[property];
-				return value2 - value1;
-			}
-		}
-	  if(item === 'New'){
-			this.blogs = this.blogs.sort(compare('createdAt'))
-			console.log(this.blogs)
-		}else{
-		 	this.blogs = this.blogs.sort(compare('love'))
-	    }
+      this.num = index
+      if(item === 'New'){
+        // this.blogs = this.blogs.sort(compare('createdAt'))
+        // console.log(this.blogs)
+          this.findBy = 'findAllBlog'
+          this.initLoadingDate()
+          this.getAllblog()
+      }else{
+        // this.blogs = this.blogs.sort(compare('love'))
+          this.findBy = 'findAllBlogByLove'
+          this.initLoadingDate()
+          this.getAllblog()
+        }
 	},
     love(index,id,lovenum){
-		console.log(event.currentTarget)
+		  console.log(event.currentTarget)
       if(this.loveSelect.indexOf(index) > -1){
-		this.loveSelect.splice(this.loveSelect.indexOf(index),1)
-		this.$axios.post('/auth/noloveBlog',{id:id}).then(res=>{
-			this.blogs[index].love--
+          this.loveSelect.splice(this.loveSelect.indexOf(index),1)
+          this.$axios.post('/auth/noloveBlog',{id:id}).then(res=>{
+          this.blogs[index].love--
         })
       }else{
         this.loveSelect.push(index)
@@ -185,10 +188,8 @@ export default {
 			this.blogs[index].love++
         })
       }
-     
-
-   
     },
+
     swipeup(){
       this.isSwipeActive = true
     },
@@ -196,8 +197,8 @@ export default {
       this.isSwipeActive = false
     },
     longtap(index){
-		this.deleteBox = index.deleteBox
-		console.log(this.deleteBox)
+      this.deleteBox = index.deleteBox
+      console.log(this.deleteBox)
     },
     loadMore() {
         console.log('loadMore')
@@ -211,7 +212,7 @@ export default {
         this.moreLoading = !this.queryLoading;
         this.pageNum++;
         
-        this.$axios.post('/auth/findAllBlog',{page:this.pageNum,pageSize:this.pageSize}).then(res=>{
+        this.$axios.post('/auth/'+ this.findBy,{page:this.pageNum,pageSize:this.pageSize}).then(res=>{
             console.log(res)
             this.blogs = this.blogs.concat(res.data.rows)
             this.allLoaded = res.data.rows.length < this.pageSize;
@@ -220,7 +221,10 @@ export default {
 	},
 	deleteMessage(index){
 		this.deleteBox = null
-	  	this.$toast({ message:'This is not your message',duration:1000})
+	  this.$toast({ message:'This is not your message',duration:1000})
+	},
+	goBlogDetail(){
+		this.$router.push('/blogDetail')
 	}
   },
   computed:{
@@ -320,7 +324,8 @@ a{
   .typebar{
     height: 10vh;
     position: absolute;
-    width: 100%;
+	width: 100%;
+	    z-index: 1;
     top: 10vh;
     color: #828282;
     background-color: white;

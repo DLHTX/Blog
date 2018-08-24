@@ -122,7 +122,10 @@ router.post('/findAllBlog',(req,res,next)=>{
         //开始的数据索引，比如当page=2 时offset=10 ，
         //而pagesize我们定义为10，则现在为索引为10，
         //也就是从第11条开始返回数据条目
-        limit:pageSize//每页限制返回的数据条数
+        limit:pageSize,//每页限制返回的数据条数
+        order:[
+            ['updatedAt','DESC']
+        ]
     })
         .then(blog =>{
             console.log(blog)
@@ -132,6 +135,34 @@ router.post('/findAllBlog',(req,res,next)=>{
         }
         })
 })
+
+router.post('/findAllBlogByLove',(req,res,next)=>{
+    let page = req.body.page
+    let pageSize = req.body.pageSize
+    Blog.findAndCountAll({
+        offset:(page - 1) * pageSize,
+        limit:pageSize,
+        order:[
+            ['love','DESC']
+        ]
+    })
+        .then(blog =>{
+            console.log(blog)
+            if(blog.length!=0){
+                console.log('blogs:'+blog.rows)
+                res.send({status:0,total:blog.count,rows:blog.rows})
+        }
+        })
+})
+
+// 我需要对某个list的id进行排序，官方文档如下：
+// User.findAll({
+//     'order': "id DESC"//倒叙
+//      'order':'id ASC'//正序
+// });
+
+
+
 
 let love = 1
 router.post('/loveBlog',(req,res,next)=>{

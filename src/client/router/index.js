@@ -9,6 +9,7 @@ import Login from './../pages/Login.vue'
 import index from './../pages/index.vue'
 import Register from './../pages/Register.vue'
 import create from './../pages/create.vue'
+import blogDetail from './../pages/blogDetail.vue'
 
 Vue.use(Router)
 
@@ -19,6 +20,7 @@ var router = new Router({
     { name: 'Register', path: '/register', component: Register },
     { name: 'index', path: '/', component: index },
     { name: 'create', path: '/create', component: create },
+    { name: 'blogDetail', path: '/blogDetail', component: blogDetail },
   ]
 })
 

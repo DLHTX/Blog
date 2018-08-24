@@ -22,8 +22,13 @@
             <i class="iconfont icon-youjiantou" style="float:right;"></i>
         </div>
         <div class="shoucang">
-            <i class="iconfont icon-shoucang"></i>
+            <i class="iconfont icon-shoucang "></i>
             <span>收藏</span>
+            <i class="iconfont icon-youjiantou" style="float:right;"></i>
+        </div>
+        <div class="boke">
+            <i class="iconfont icon-blog "></i>
+            <span>我的</span>
             <i class="iconfont icon-youjiantou" style="float:right;"></i>
         </div>
         <div class="zhuxiao" v-if="isLogin" @click="logout()">
@@ -92,14 +97,14 @@ export default {
 
 <style lang='less' scoped>
     .slide{
-            height: 100vh;
+        height: 100vh;
         width:80%;
         background-color: white;
         position: absolute;
         box-shadow: 0 0 31px -8px #0e0e0e4a;
         -moz-box-shadow:0 0 31px -8px #0e0e0e4a;
 	    -webkit-box-shadow:0 0 31px -8px #0e0e0e4a;
-
+        z-index: 999;
         top: 0;
         left: -90%;
         transition:all .2s;
