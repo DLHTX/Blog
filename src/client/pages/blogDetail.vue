@@ -1,112 +1,165 @@
 <template>
-    <div class="createBox">
-        <div class="bar">
-            <i class="iconfont icon-back" @click="goback()"></i>
-            <span>New Blog</span>
+    <div class="blogDetail">
+        <div class="pane" v-show='ispop'>
+
         </div>
-        <div class="content1">
-            <input type="text" placeholder="Please Enter Blog Title" v-model="BlogInfo.title"> 
-            <textarea name="" id="" cols="30" rows="10" placeholder="Please Enter Blog Content" v-model="BlogInfo.content"></textarea>
-            <div class="btn" @click="createBlog()">Send</div>
+
+        <div>
+            <i class="iconfont icon-back" @click="goback()" style="font-size:inherit;float:left;"></i>
+            <span>Blog</span>
         </div>
+
+        <div class="blog">
+            <div class="userinfo1">
+                <img :src="blog.avatar" alt="">
+                <span style="rgb(70, 70, 70);">{{blog.username}}</span>
+                <span style="justify-self:end;rgb(70, 70, 70);">{{friendlyDate(blog.updatedAt)}}</span>
+            </div>
+            <div class="title">
+                {{blog.title}}
+            </div>
+            <div class="content">
+                {{blog.content}}
+            </div>
+        </div>
+        
+        <div class="remark" @click="popRemark()">
+            <img src="../static/img/remake.png" alt="">
+        </div>
+
+        <popRemark class="popRemark"  :class="ispop?'popRemarkActive':''"></popRemark>
+
     </div>
 </template>
- 
+
 <script>
+import popRemark from '../../client/components/popRemark'
+
 export default {
+    components:{
+        popRemark
+    },
     data(){
         return {
-            BlogInfo:{
-                title:null,
-                content:null,
-                love:0,
-                username:this.$route.params.userInfo.username,
-                avatar:this.$route.params.userInfo.avatar,
-            }
+            id:this.$route.query.queryid,
+            blog:null,
+            ispop:false
         }
-
     },
+    mounted(){
+         this.getBlog()
+    },
+
     methods:{
+        initData(){
+            this.id = this.$route.query
+        },
+        getBlog(){
+            this.$axios.post('/auth/findBlogByid',{id:this.id})
+                .then(res=>{
+                    console.log(res)
+                    this.blog = res.data.blog[0]
+                })
+        },
         goback(){
             this.$router.push('/')
         },
-        createBlog(){
-            this.$axios.post('/auth/creatBlog',{BlogInfo:this.BlogInfo}).then(res=>{
-                console.log(res)
-                if(res.data.status === 0 ){
-                    this.$toast({message:'发布成功',duration:1000})
-                    this.$router.push('/')
-                }
-            })
+        popRemark(){
+            this.ispop = true
         }
     }
 }
 </script>
 
 <style lang='less' scoped>
-input{
-    height: 5vh;
-    font-size: 3vh;
-    font-family: 'Raleway';
-    width: 100%;
-    font-weight: 900;
-    border-bottom: 1px solid #e2e2e2;
-    -webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
-    -webkit-user-select: none;
-    -moz-user-focus: none;
-    -moz-user-select: none;
-    -webkit-appearance:none;
-    outline: none;
-    border: none;
-    &:foucs{
-        outline:none;
+    .pane{
+        background: #63636394 !important;
+        z-index: -1;
+        height: 100vh;
+        top: 0;
+        width: 100vh;
+        position: absolute;
+        transition: all 0.2s;
     }
-}
-.createBox{
-    height: 100vh;
-    font-size: 2vh;
-    font-family: 'Raleway';
-    background-color: white;
-    padding: 0 2vh;
-    text-align: center;
-    .bar{
-        height: 10vh;
+    .popRemarkActive {
+        top: 0!important;
+        transition: all .2s;
+    }
+    .blogDetail{
+        height: 8vh;
         text-align: center;
-        line-height: 10vh;
-        font-family: 'Raleway';
+        line-height: 8vh;
+        padding: 0 1vh;
         font-size: 4vh;
-        i{
-            font-size: 4vh;
-            float: left;
-        }
-        span{
-
-        }
+        position: fixed;
+        background: white;      
+        width: 100%;
+        padding: 0;
+        left: 0;
+        border-bottom:1px solid #e6e6e6;
+          transition: all .2s;
     }
-    .content1{
-        margin-top: 1vh;
-        .btn{
-            margin-top: 4vh;
+    .userinfo1{
+            height: 8vh;
+            font-size: 2vh;
+            grid-template-columns: 15% 20% 65%;
+            display: grid;
+            padding: 0 2vh;
+            img{
+            height:6vh;
+            width: 6vh;
+            border-radius: 50%;
+            margin-right: 1vh;
+                        z-index: -2;
+            align-self: center;
+            }
+            span{
+            // align-self: center;
+            }
+        }
+
+    .blog{
+        height: 92vh;
+        overflow: scroll;
+        padding: 0 1vh;
+        .title{
+            text-align: initial;
+            padding: 0 1vh;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .content{
+            font-size: 3vh;
+            line-height: 25px;
+            text-align: initial;
+            padding: 0 1vh;
+        }
+       
+    }    
+    .remark{
+        width: 100%;
+        position: fixed;
+        height: 8vh;
+        line-height: 8vh;
+        background-color: white;
+        top: 100vh;
+        transform: translateY(-8vh);
+        border-top: 1px solid #e6e6e6;
+        display: grid;
+        grid-template-columns: auto auto;
+        img{
+            height: 4vh;
+            align-self: center;
             display: inline-block;
-            padding: 1vh 10vh;
-            background-color: #6cc372;
-            border-radius: 21px;
-            box-shadow: 0 0 44px -9px #3a3a3a73;
-            color: white;
-        }
-        textarea{
-            outline: none;
-            border: none;
-            margin-top: 2vh;
-            font-size: 2.6vh;
-            width: 100%;
-            border-bottom: 1px solid #e2e2e2;
-            font-family: 'Raleway';
-            resize: none;
+            margin-left: 2vh;    
+
         }
     }
-
-
-}
+    .popRemark{
+        position:absolute;
+        top:100vh;
+        transition: all .2s;
+    }
 </style>
-

@@ -17,15 +17,6 @@ router.get('/token',(req,res,next) =>{
 // });
 
 
-
-// router.get('/reg', function(req, res, next) {
-//     res.render('reg', { title: 'Register' });
-// });
-
-// router.get('/editpw', function(req, res, next) {
-//     res.render('editpw', { title: 'editpassword' });
-// });
-
 router.post('/register', function(req, res, next) {
   var username = req.body.username
   var password = req.body.password
@@ -113,6 +104,17 @@ router.post('/findMyBlog',(req,res,next)=>{
             res.send({status:0,msg:'查询成功！',Bloginfo})
     })
 })
+
+router.post('/findBlogByid',(req,res,next)=>{
+    let id = req.body.id
+    console.log(id)
+    Blog.findAll({raw :true,where:{id:id}})
+    .then(function(blog){
+        console.log(blog)
+        res.send({status:0,msg:'查询成功！',blog})
+    })
+})
+
 
 router.post('/findAllBlog',(req,res,next)=>{
     let page = req.body.page

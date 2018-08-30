@@ -89,7 +89,12 @@ export default {
           //通过this.$emit实现子组件改变父组件的值！！！！！！！！
       },
       goCreate(){
-          this.$router.push({name:'create',params:{userInfo:this.userInfo}})
+          if(!this.isLogin){
+              console.log('isnotelogin')
+            this.$toast({ message:'尚未登录',duration:1000})
+          }else{
+            this.$router.push({name:'create',params:{userInfo:this.userInfo}})
+          }
       }
     }
 }

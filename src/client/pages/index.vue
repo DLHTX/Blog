@@ -28,8 +28,7 @@
         infinite-scroll-immediate-check="false"
         >
         <div class="item" v-for="(blog,index) in blogs" :key='blog.id' 
-		 v-longtap="{fn:longtap,deleteBox:index}"
-
+		    v-longtap="{fn:longtap,deleteBox:index}"
 		 >
           <div class="userinfo">
              <img :src="blog.avatar" alt="">
@@ -40,7 +39,7 @@
            {{blog.title}}
           </div>
 
-          <div class="blogContent" 	@click="goBlogDetail()">{{blog.content}}</div>
+          <div class="blogContent" 	@click="goBlogDetail(blog.id)">{{blog.content}}</div>
 
           <div class="icon" >
             <i class="iconfont icon-love"  
@@ -223,8 +222,10 @@ export default {
 		this.deleteBox = null
 	  this.$toast({ message:'This is not your message',duration:1000})
 	},
-	goBlogDetail(){
-		this.$router.push('/blogDetail')
+	goBlogDetail(id){
+    console.log(id)
+     this.$router.push({path:'/blogDetail',query:{queryid:id}})
+    // this.$router.push({name:'blogDetail',params:id})
 	}
   },
   computed:{
@@ -282,9 +283,9 @@ body {
   // align-items: center;
   // justify-content: center;
   height: 100%;
-  margin: 0;
+  margin: 0!important;
   user-select:none!important;
-  padding: 0;
+  padding: 0!important;
 
 }
 a{
@@ -324,8 +325,8 @@ a{
   .typebar{
     height: 10vh;
     position: absolute;
-	width: 100%;
-	    z-index: 1;
+	  width: 100%;
+	  z-index: 1;
     top: 10vh;
     color: #828282;
     background-color: white;
@@ -344,19 +345,19 @@ a{
       }
     }
   	.content{
-    overflow: scroll;
-    height: 80%;
-    width: 100%;
-    margin-top: 10vh;
-    padding-top: 10vh;
+      overflow: scroll;
+      height: 80%;
+      width: 100%;
+      margin-top: 10vh;
+      padding-top: 10vh;
 
     .item{
       width: 95%;
       margin: auto;
       border-radius: 4px;
       background-color: white;
-	  margin-top: 2vh;
-	  position:relative;
+      margin-top: 2vh;
+      position:relative;
       // box-shadow: 0 0 36px -1px #0000001f;
       // -moz-box-shadow:  0 0 36px -1px #0000001f;
 		// -webkit-box-shadow: 0 0 36px -1px #0000001f;
