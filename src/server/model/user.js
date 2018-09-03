@@ -46,6 +46,18 @@ let Blog = sequelize.define('blog',{
         timestamps: true
 });
 
+let Remake = sequelize.define('remake',{
+    username: Sequelize.STRING,//用户名
+    avatar:Sequelize.STRING,//头像
+    content:Sequelize.STRING,//
+    blogId:Sequelize.INTEGER//那条博客的评论
+},
+{
+    tableName: 'remake',
+    freezeTableName: true,
+    timestamps: true
+});
+
 //指定User和User_relation的关系为1：1的关系，设定目标为frendid，即查询中 userid = frendid
 // User.belongsTo(Blog,{foreignKey:'userId'});
 // User.sync({force:true}) 
@@ -59,21 +71,7 @@ let Blog = sequelize.define('blog',{
 // 默认时为true，对应表名为userinfos
 
 
-// var Userlove = sequelize.define('userlove',{
-//     username: Sequelize.STRING,//用户名
-//     love:Sequelize.STRING
-
-// },{freezeTableName:true,timestamps: false});
-
-
-// Userlove.findAll({raw: true}).then(function(articles) {
-//     console.log(articles)
-// });
-
 // User.create({username:"dhty", password:"123456",avatar:'ssss'})
-
-// //username role password对应相应的字段名
-
 
 // User.findAll({raw: true}).then(function(articles) {
 //     console.log(articles)
@@ -85,28 +83,11 @@ let Blog = sequelize.define('blog',{
 //     console.log(articles)
 // });
 
-/*Userlove.create({username:"d132432", love:"123456", role:0})*/
-/*
-
-User.find({  where:{username:"asdasd" , password:"123456"}}).then(function(a){
-    console.log(a)
-})
-*/
-
-/*User.findAll({raw:true,
-    where:{
-    $and :[
-        {username:'xlj'},
-        {password:'123456'}
-]
-}}).then(function(e){
-    console.log(e[0].username)
-});*/
-    /*
-.then(function(){
-    User.findAll({raw:true,where:{password:'1234576'}})
-})
-*/
+// Remake.sync({force:true})
+// Remake.create({username:'asdasdas', avatar:"我是blog",content:'我是内容',blogId:1})
+// Remake.findAll({raw: true}).then(function(articles) {
+//     console.log(articles)
+// });
 
 module.exports.User = User;
 module.exports.Blog = Blog;

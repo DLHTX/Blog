@@ -187,6 +187,13 @@ router.post('/noloveBlog',(req,res,next)=>{
     })
 })
 
+
+router.post('/sendRemake',(req,res,next)=>{
+    let form = req.body.form
+    Remake.create({username:form.username, avatar:form.avatar,content:form.content,blogId:form.blogId}).then(()=>{
+        res.send({status:0 ,msg:'评论成功'})
+    })  
+})
 // router.post('/editpassword', function(req, res, next) {
 //         var username = req.body.username
 //         var editpassword = req.body.editpassword

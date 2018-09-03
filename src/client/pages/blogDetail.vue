@@ -9,9 +9,9 @@
             <span>Blog</span>
         </div>
 
-        <div class="blog">
-            <div class="userinfo1">
-                <img :src="blog.avatar" alt="">
+        <div class="blog" v-if='blog'>
+            <div class="userinfo1" >
+                <img :src="blog.avatar" alt="" >
                 <span style="rgb(70, 70, 70);">{{blog.username}}</span>
                 <span style="justify-self:end;rgb(70, 70, 70);">{{friendlyDate(blog.updatedAt)}}</span>
             </div>
@@ -27,7 +27,8 @@
             <img src="../static/img/remake.png" alt="">
         </div>
 
-        <popRemark class="popRemark"  :class="ispop?'popRemarkActive':''"></popRemark>
+        <popRemark class="popRemark"  :class="ispop?'popRemarkActive':''" v-on:ispop='changeActive($event)' 
+        :userInfo='blog'></popRemark>
 
     </div>
 </template>
@@ -43,17 +44,18 @@ export default {
         return {
             id:this.$route.query.queryid,
             blog:null,
-            ispop:false
+            ispop:false,
+            userInfo:this.$route.userInfo
         }
     },
-    mounted(){
+    created(){
          this.getBlog()
     },
 
     methods:{
-        initData(){
-            this.id = this.$route.query
-        },
+        // initData(){
+        //     this.id = this.$route.query
+        // },
         getBlog(){
             this.$axios.post('/auth/findBlogByid',{id:this.id})
                 .then(res=>{
@@ -65,7 +67,11 @@ export default {
             this.$router.push('/')
         },
         popRemark(){
-            this.ispop = true
+            if(this.ispop) { this.ispop = false}
+            else{this.ispop = true}
+        },
+        changeActive(event){
+            this.ispop = event
         }
     }
 }

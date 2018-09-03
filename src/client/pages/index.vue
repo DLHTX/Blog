@@ -83,7 +83,7 @@
     
       </div>
 
-      <Slide id="slide" :class="{activeClass:isActive}" v-on:noActive='changeActive($event)'></Slide>
+      <Slide id="slide" :class="{activeClass:isActive}" v-on:noActive='changeActive($event)'  v-on:userInfo ='getUserInfo($event)'></Slide>
     </div>
      <router-view></router-view> 
   </div>
@@ -100,6 +100,7 @@
 
 <script>
 import Slide from '../../client/components/Slide'
+import { userInfo } from 'os';
 
 
 export default {
@@ -125,7 +126,8 @@ export default {
       //////////////////////
       loveSelect:[],
       deleteBox:null,
-      findBy:'findAllBlog'
+      findBy:'findAllBlog',
+      userInfo
     }
   },
   created(){
@@ -224,9 +226,12 @@ export default {
 	},
 	goBlogDetail(id){
     console.log(id)
-     this.$router.push({path:'/blogDetail',query:{queryid:id}})
+     this.$router.push({path:'/blogDetail',query:{queryid:id,userInfo:this.userInfo}})
     // this.$router.push({name:'blogDetail',params:id})
-	}
+  },
+  getUserInfo(data){
+    this.userInfo = data
+  }
   },
   computed:{
     resultNum(){
@@ -243,6 +248,8 @@ export default {
   
 }
 </script>
+
+
 
 <style lang='less' >
 @keyframes love{

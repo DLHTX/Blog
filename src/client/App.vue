@@ -1,7 +1,5 @@
 <template>
-
     <router-view v-if='isRouterAlive'></router-view> 
-
 </template>
 
 <script>
@@ -48,5 +46,11 @@ body {
   margin: 0!important;
   user-select:none!important;
   padding: 0!important;
+}
+input{
+  text-decoration: none;
+  outline: none;
+  border:none;
+  background: none;
 }
 </style>
