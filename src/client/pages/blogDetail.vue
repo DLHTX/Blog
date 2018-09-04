@@ -1,7 +1,6 @@
 <template>
     <div class="blogDetail">
         <div class="pane" v-show='ispop'>
-
         </div>
 
         <div>
@@ -28,13 +27,14 @@
         </div>
 
         <popRemark class="popRemark"  :class="ispop?'popRemarkActive':''" v-on:ispop='changeActive($event)' 
-        :userInfo='blog'></popRemark>
+        :blogname='blog.username' ></popRemark>
 
     </div>
 </template>
 
 <script>
 import popRemark from '../../client/components/popRemark'
+import {mapGetters} from   'vuex'
 
 export default {
     components:{
@@ -73,6 +73,9 @@ export default {
         changeActive(event){
             this.ispop = event
         }
+    },
+    computed:{
+        ...mapGetters(['user'])
     }
 }
 </script>
@@ -131,7 +134,7 @@ export default {
         .title{
             text-align: initial;
             padding: 0 1vh;
-            font-weight: 500;
+            font-weight: 400;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -141,6 +144,7 @@ export default {
             line-height: 25px;
             text-align: initial;
             padding: 0 1vh;
+                color: #616161;
         }
        
     }    

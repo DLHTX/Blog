@@ -30,8 +30,8 @@
         <div class="item" v-for="(blog,index) in blogs" :key='blog.id' 
 		    v-longtap="{fn:longtap,deleteBox:index}"
 		 >
-          <div class="userinfo">
-             <img :src="blog.avatar" alt="">
+          <div class="userinfo" >
+             <img :src="blog.avatar" alt="" v-if='blog.avatar'>
              <span style="rgb(70, 70, 70);">{{blog.username}}</span>
              <span style="justify-self:end;rgb(70, 70, 70);">{{friendlyDate(blog.updatedAt)}}</span>
           </div>
@@ -149,8 +149,10 @@ export default {
       this.pageNum = 1
     },
     onActive(){
+      console.log('click')
       event.stopPropagation(); 
       this.isActive = true;
+      console.log(this.isActive)
     },
     noActive(){
       event.stopPropagation(); 
@@ -414,7 +416,7 @@ a{
 	  }
 	  .blogContent{
 		padding: 0 2vh;
-		color: #424242;
+		color: #b5b5b5;
 		line-height: 20px;
 		display: -webkit-box;
 		-webkit-box-orient: vertical;

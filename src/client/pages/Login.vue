@@ -6,7 +6,7 @@
             <img src="../static/img/avatar.png" alt="">
         </div>
         <div style="margin-top: 15vh;"><input type="text" v-model="username" placeholder="Username/Phone"></div>
-        <div><input type="password" v-model="password" placeholder="Password"></div>
+        <div><input type="password" v-model="password" placeholder="Password" @keyup.enter= 'onLogin()'></div>
 
        <div @click="onLogin()" class="loginBtn">Login</div>
        <router-link style="margin-top: 2vh;display:block;" to='/register'>Register</router-link>
@@ -16,6 +16,7 @@
 
 <script>
  import Upload from '../components/upload.vue'
+ import { mapGetters, mapActions } from 'vuex'
 // import { mapActions } from 'vuex'
 
     export default {
@@ -30,24 +31,42 @@
         },
         methods: {
             // ...mapActions(['register']),
+            ...mapActions([
+                'checkLogin',
+                'login'
+            ]),
             onLogin(){
                 if(this.username == null||this.password === null){
                     this.$toast({message:'用户名或密码不能为空',duration:1000})
                 }else{
-                    this.$axios.post('/auth/login',{username:this.username,password:this.password}).then(res=>{
-                        console.log(res)
-                        if(res.data.status === 0 ){
+                    // this.$axios.post('/auth/login',{username:this.username,password:this.password}).then(res=>{
+                    //     console.log(res)
+                    //     if(res.data.status === 0 ){
+                    //         this.$toast({ message:'登陆成功',duration:1000})
+                    //         this.$router.push('/')
+                    //     }else{this.$toast({message:'用户名或密码错误',duration:1000})
+                    //     }
+                    // })
+                    console.log('1')
+                    this.login({username:this.username,password:this.password}).then(res=>{
+                       if(this.isLogin){
                             this.$toast({ message:'登陆成功',duration:1000})
-                            this.$router.push('/')
-                        }else{this.$toast({message:'用户名或密码错误',duration:1000})
-                        }
-                    })
-                }
+                            this.$router.push({path: this.$route.query.redirect || '/'})
+                        }else{
+                            this.$toast({message:'用户名或密码错误',duration:1000})}
+                        })
+                    }
             },
             goback(){
                 this.$router.push('/')
             }
-        }
+        },
+        computed:{
+        ...mapGetters([
+            'isLogin',
+            'user'
+        ])
+    }
 
            
 

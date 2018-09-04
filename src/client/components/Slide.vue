@@ -1,11 +1,10 @@
 <template>
 <div class="slide" @click="stopPropagation()" :style="`left:${noActive.left};`">
     <div class="login" v-if="isLogin">
-        <img :src= "userInfo.avatar" alt="">
-        <router-link to="/login"  class="loginBtn">{{userInfo.username}}</router-link>
+        <img :src= "user.avatar" alt="" v-if= "user">
+        <router-link to="/login"  class="loginBtn">{{user.username}}</router-link>
     </div>
-
-     <div class="login" v-if="!isLogin">
+    <div class="login" v-if="!isLogin">
         <img src= "../static/img/avatar.png" alt="">
         <router-link to="/login"  @mouseover.native="noActive()" class="loginBtn">登录</router-link>
     </div>
@@ -31,7 +30,7 @@
             <span>我的</span>
             <i class="iconfont icon-youjiantou" style="float:right;"></i>
         </div>
-        <div class="zhuxiao" v-if="isLogin" @click="logout()">
+        <div class="zhuxiao" v-if="isLogin" @click="onlogout()">
             <i class="iconfont icon-logout" style="color: #ff7979;"></i>
             <span  style="color: #ff7979;">注销</span>
             <i class="iconfont icon-youjiantou" style="float:right; color: #ff7979;"></i>
@@ -45,6 +44,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 export default {
     name: 'Slide',
     // props:[
@@ -53,35 +53,41 @@ export default {
     data(){
         return{
             Active:false,
-            isLogin:false,
-            userInfo:null
         }
     },
-    created(){
-          this.$axios.post('/auth/checkLogin').then(res=>{
-          console.log(res)
-          if(res.data.status === 0 ){
-            this.isLogin = true
-            this.userInfo = res.data.userInfo
-          }
-      })
+    computed:{
+        ...mapGetters([
+            'isLogin',
+            'user'
+        ])
+    },
+    mounted(){
+        this.checkLogin()
     },
     methods:{
+      ...mapActions([
+        'checkLogin',
+        'logout'
+       ]),
       stopPropagation(){
         event.stopPropagation(); 
       },
-      logout(){
-            this.$axios.post('/auth/logout').then(res=>{
-                console.log('注销成功')
-                if(res.data.status === 0 ){
-                     this.isLogin = false
-                     this.$toast({ message:'注销成功',duration:1000})
-                     this.$emit('noActive',this.Active)
-                     this.$router.push('/')
-                }else{
-                     this.$toast({ message:'注销失败',duration:1000})
+      onlogout(){
+            // this.$axios.post('/auth/logout').then(res=>{
+
+            //     if(res.data.status === 0 ){
+            //          this.isLogin = false
+            //          this.$toast({ message:'注销成功',duration:1000})
+            //          this.$emit('noActive',this.Active)
+            //          this.$router.push('/')
+            //     }else{
+            //          this.$toast({ message:'注销失败',duration:1000})
+            //     }
+            // })
+            this.logout().then(res=>{
+                if(this.isLogin ){
+                    this.$toast({ message:'注销成功',duration:1000})
                 }
-               
             })
       },
       noActive(){
@@ -90,13 +96,14 @@ export default {
       },
       goCreate(){
           if(!this.isLogin){
-              console.log('isnotelogin')
             this.$toast({ message:'尚未登录',duration:1000})
           }else{
-            this.$router.push({name:'create',params:{userInfo:this.userInfo}})
+            this.$router.push({name:'create'})
           }
       }
-    }
+    },
+
+
 }
 </script>
 

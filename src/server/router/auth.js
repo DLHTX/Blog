@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var User = require('../model/user.js').User;
 let Blog = require('../model/user.js').Blog;
+let Remake = require('../model/user.js').Remake;
 // var Userlove = require('../models/user.js').Userlove;
 var session = require('express-session');
 // var passport = require('passport');//passport模块专门处理登录
@@ -72,9 +73,9 @@ router.post('/login', function(req, res, next){
 
 router.post('/checkLogin',(req,res,next)=>{
     if(req.session.user){
-        res.send({status:0,msg:'已登录',userInfo:req.session.user })
+        res.send({status:0,isLogin:true,userInfo:req.session.user })
     }else{
-        res.send({status:1,msg:'还未登录'})
+        res.send({status:1,isLogin:false})
     }
 })
 
@@ -190,9 +191,22 @@ router.post('/noloveBlog',(req,res,next)=>{
 
 router.post('/sendRemake',(req,res,next)=>{
     let form = req.body.form
-    Remake.create({username:form.username, avatar:form.avatar,content:form.content,blogId:form.blogId}).then(()=>{
+    Remake.create({username:form.username, avatar:form.avatar,content:form.remarkContent,blogId:form.id}).then(()=>{
         res.send({status:0 ,msg:'评论成功'})
     })  
+})
+
+router.post('/findRemake',(req,res,next)=>{
+    let id = req.body.id
+    Remake.findAll({
+        where:{blogId:id},
+        order:[
+            ['createdAt','DESC']
+        ]
+    })
+        .then(function(remake){
+                res.send({status:0,msg:'查询成功！',remake})
+        })
 })
 // router.post('/editpassword', function(req, res, next) {
 //         var username = req.body.username

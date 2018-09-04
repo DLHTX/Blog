@@ -85,10 +85,11 @@ let Remake = sequelize.define('remake',{
 
 // Remake.sync({force:true})
 // Remake.create({username:'asdasdas', avatar:"我是blog",content:'我是内容',blogId:1})
-// Remake.findAll({raw: true}).then(function(articles) {
-//     console.log(articles)
-// });
+Remake.findAll({raw: true}).then(function(articles) {
+    console.log(articles)
+});
 
 module.exports.User = User;
 module.exports.Blog = Blog;
+module.exports.Remake = Remake;
 // module.exports.Userlove = Userlove;

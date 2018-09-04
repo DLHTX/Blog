@@ -17,6 +17,7 @@
 
 <script>
  import Upload from '../components/upload.vue'
+import { mapGetters, mapActions } from 'vuex'
 // import { mapActions } from 'vuex'
 
     export default {
@@ -31,31 +32,40 @@
                 avatar:'http://pdsvnon20.bkt.clouddn.com/lyttonThu Aug 23 2018 09:44:57 GMT+0800 (中国标准时间)43.jpg'
             }
         },
+        computed:{
+            ...mapGetters([
+                'isLogin'
+            ])
+        },
         methods: {
-            // ...mapActions(['register']),
+            ...mapActions([
+                'register'
+                ]),
             onRegister(){
                 if(this.username == null||this.password === null){
                     this.$toast({message:'用户名或密码不能为空',duration:1000})
                 }
                 else if( (/^[a-zA-Z0-9_-]{4,16}$/).test(this.username)){
                     if(this.password === this.password1 ){
-                        this.$axios.post('/auth/register',{username:this.username,password:this.password,avatar:this.avatar}).then(res=>{
-                            console.log(res)
-                            if(res.data.status === 0 ){
-                                this.$toast({ message:'注册成功',duration:1000})
-                                this.$router.push('/login')
-                            }else{this.$toast({message:'用户名已存在',duration:1000})}
-                        })}
+                        // this.$axios.post('/auth/register',{username:this.username,password:this.password,avatar:this.avatar}).then(res=>{
+                        //     console.log(res)
+                        //     if(res.data.status === 0 ){
+                        //         this.$toast({ message:'注册成功',duration:1000})
+                                // this.$router.push('/login')
+                        //     }else{this.$toast({message:'用户名已存在',duration:1000})}
+                        // })
+                    this.register({username:this.username,password:this.password,avatar:this.avatar}).then(res=>{
+                        console.log(res)
+                        if(res.status === 0){
+                            this.$toast({ message:'注册成功',duration:1000})
+                            this.$router.push('/login')
+                        }else{
+                            this.$toast({message:'用户名已存在',duration:1000})
+                        }
+                    })
+                }
                 }else{this.$toast({message:'用户名必须为4-16位',duration:1000})}
-                // else if(this.password === this.password1 ){
-                //     this.$axios.post('/auth/register',{username:this.username,password:this.password}).then(res=>{
-                //         console.log(res)
-                //         if(res.data.status === 0 ){
-                //             this.$toast({ message:'登陆成功',duration:1000})
-                //             this.$router.push('/')
-                //         }else{this.$toast({message:'登陆失败',duration:1000})}
-                //     })
-                // }
+              
             },
             goback(){
                 this.$router.push('/')
@@ -64,10 +74,8 @@
                  this.avatar = data
                  console.log(this.avatar)
             }
-        }
-
+        },
            
-
     }
 
 </script>
