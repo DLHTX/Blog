@@ -63,7 +63,7 @@ app.use(function (err, req, res, next) {
 })
 
 // 设置监听端口
-const SERVER_PORT = 4000
+const SERVER_PORT = 4041
 app.listen(SERVER_PORT, () => {
   console.info(`服务已经启动，监听端口${SERVER_PORT}`)
 })
