@@ -145,10 +145,9 @@ export default {
             text-align: initial;
             padding: 0 1vh;
             color: #616161;
-            overflow-y: scroll;
+            overflow: scroll;
             height: 74%;
             z-index: -2;
-            position: relative;
         }
        
     }    
