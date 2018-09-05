@@ -22,69 +22,53 @@
           >{{item}}</span>
     </div>
 
-      <div class="content" 
+	
+ 	<div class="content" 
         v-swipeup="{fn:swipeup,name:'上滑'}"
         v-swipedown="{fn:swipedown,name:'下滑'}"
         v-infinite-scroll="loadMore" 
         infinite-scroll-disabled="moreLoading" 
         infinite-scroll-distance="0" 
         infinite-scroll-immediate-check="false"
-        >
-        <div class="item" v-for="(blog,index) in blogs" :key='blog.id' 
-		    v-longtap="{fn:longtap,deleteBox:index}"
-		 >
-          <div class="userinfo" >
-             <img :src="blog.avatar" alt="" v-if='blog.avatar'>
-             <span style="rgb(70, 70, 70);">{{blog.username}}</span>
-             <span style="justify-self:end;rgb(70, 70, 70);">{{friendlyDate(blog.updatedAt)}}</span>
-          </div>
-          <div class="title">
-           {{blog.title}}
-          </div>
+    >
+		
+		<mt-loadmore :top-method="loadTop" @top-status-change= "handleTopChange" ref='loadmore'>
+			<div class="orderList-page-topLoad mint-loadmore-top" slot='top' style='line-height:normal'>
+				<span class="orderList-page-topLoad-icon" :class= 'topStatus ==="drop" ? "orderList-page-topLoad-is-rotate" :""' ></span>
+				<span style="text-align: center;display: block;margin-top: 2vh;">{{topRefreshVal}}</span>
+			</div>
+		
+        <div class="item" v-for="(blog,index) in blogs" :key='blog.id' v-longtap="{fn:longtap,deleteBox:index}">
+			<div class="userinfo" >
 
-          <div class="blogContent" 	@click="goBlogDetail(blog.id)">{{blog.content}}</div>
 
-          <div class="icon" >
-            <i class="iconfont icon-love"  
-              @click="love(index,blog.id)"
-              :key="index"
-              :class="{ loveActive: loveSelect.indexOf(index) > -1 }"
-            ></i><span style="    align-self: center;">{{blog.love}}</span>
-            <i class="iconfont icon-share" style="color: rgb(128, 128, 128);justify-self: end;"></i>
-          </div>
-		  <div class="deleteBox" v-show="deleteBox === index" @click="deleteMessage(index)">
-			  <span>Detele This Message</span>
-		  </div>
-
-		<!-- <social-sharing url="https://vuejs.org/"
-							title="The Progressive JavaScript Framework"
-							description="Intuitive, Fast and Composable MVVM for building interactive interfaces."
-							quote="Vue is a progressive framework for building user interfaces."
-							hashtags="vuejs,javascript,framework"
-							twitter-user="vuejs"
-							inline-template>
-								<div>
-									<network network="email">
-										<i class="fa fa-envelope"></i> Email
-									</network>
-									<network network="googleplus">
-										<i class="fa fa-google-plus"></i> Google +
-									</network>
-									<network network="weibo">
-										<i class="fa fa-weibo"></i> Weibo
-									</network> 
-
-								</div>
-		</social-sharing> -->
+				<img :src="blog.avatar" alt="" v-if='blog.avatar'>
+				<span style="rgb(70, 70, 70);">{{blog.username}}</span>
+				<span style="justify-self:end;rgb(70, 70, 70);">{{friendlyDate(blog.updatedAt)}}</span>
+			</div>
+          	<div class="title">{{blog.title}}</div>
+        	<div class="blogContent" @click="goBlogDetail(blog.id)">{{blog.content}}</div>
+			<div class="icon" >
+				<i class="iconfont icon-love"  
+				@click="love(index,blog.id)"
+				:key="index"
+				:class="{ loveActive: loveSelect.indexOf(index) > -1 }"
+				></i><span style="    align-self: center;">{{blog.love}}</span>
+				<i class="iconfont icon-share" style="color: rgb(128, 128, 128);justify-self: end;"></i>
+			</div>
+			<div class="deleteBox" v-show="deleteBox === index" @click="deleteMessage(index)">
+				<span>Detele This Message</span>
+			</div>
         </div>
+		</mt-loadmore>
+	
 
-        <!--底部判断是加载图标还是提示“全部加载”-->
-        <div class="more_loading" v-show="!queryLoading" style="height: 6vh;text-align: center;line-height: 6vh;">
-            <mt-spinner type="snake" color="#00ccff" :size="20" v-show="moreLoading&&!allLoaded"></mt-spinner>
-            <span v-show="allLoaded">No more data..</span>
-        </div>
-    
-      </div>
+        	<!--底部判断是加载图标还是提示“全部加载”-->
+			<div class="more_loading" v-show="!queryLoading" style="height: 6vh;text-align: center;line-height: 6vh;">
+				<mt-spinner type="snake" color="#00ccff" :size="20" v-show="moreLoading&&!allLoaded"></mt-spinner>
+				<span v-show="allLoaded">No more data..</span>
+			</div>
+    	</div>
 
       <Slide id="slide" :class="{activeClass:isActive}" v-on:noActive='changeActive($event)'  v-on:userInfo ='getUserInfo($event)'></Slide>
     </div>
@@ -131,7 +115,9 @@ export default {
       deleteBox:null,
       findBy:'findAllBlog',
       userInfo,
-      isSearch : false
+	  isSearch : false,
+	  topStatus:null,
+	  topRefreshVal:null
     }
   },
   created(){
@@ -234,14 +220,29 @@ export default {
     console.log(id)
      this.$router.push({path:'/blogDetail',query:{queryid:id,userInfo:this.userInfo}})
     // this.$router.push({name:'blogDetail',params:id})
-  },
-  getUserInfo(data){
-    this.userInfo = data
-  },
-  search(){
-    if(this.isSearch){ this.isSearch = false}
-    else{this.isSearch = true}
-  }
+	},
+	getUserInfo(data){
+		this.userInfo = data
+	},
+	search(){
+		if(this.isSearch){ this.isSearch = false}
+		else{this.isSearch = true}
+	},
+	loadTop: function(){
+	 	this.getAllblog()
+		this.$refs.loadmore.onTopLoaded()
+	},
+	handleTopChange(status){
+		this.topStatus = status
+		if(this.topStatus==='drop'){
+			this.topRefreshVal = '松开立即刷新'
+		}else if(this.topStatus==='loading'){
+			this.topRefreshVal ='正在刷新'
+		}else{
+			this.topRefreshVal =''
+		}
+		console.log(status)
+	}
   },
   computed:{
     resultNum(){
