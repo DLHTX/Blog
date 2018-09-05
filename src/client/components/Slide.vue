@@ -73,17 +73,6 @@ export default {
         event.stopPropagation(); 
       },
       onlogout(){
-            // this.$axios.post('/auth/logout').then(res=>{
-
-            //     if(res.data.status === 0 ){
-            //          this.isLogin = false
-            //          this.$toast({ message:'注销成功',duration:1000})
-            //          this.$emit('noActive',this.Active)
-            //          this.$router.push('/')
-            //     }else{
-            //          this.$toast({ message:'注销失败',duration:1000})
-            //     }
-            // })
             this.logout().then(res=>{
                 if(this.isLogin ){
                     this.$toast({ message:'注销成功',duration:1000})

@@ -27,8 +27,8 @@ export default {
                 title:'',
                 content:'',
                 love:0,
-                username:this.user.userInfo.username,
-                avatar:this.user.userInfo.avatar,
+                username:this.user.username,
+                avatar:this.user.avatar,
         }
     },
     methods:{

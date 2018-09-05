@@ -2,12 +2,13 @@
     <div class="popRemark">
         <i class="iconfont icon-shangjiantou" @click="ispop()"></i>
         <div style="overflow:scroll;height: 78vh;">
+            <span v-if= 'remakeList.length === 0 ' style="font-size: 20px; color: #888888;">嘤嘤嘤~没有评论哟~</span>
             <div class="remake" v-for= '(remake,index) in remakeList' :key= "index" v-if= "remakeList">
                 <img :src="remake.avatar" alt="">
                 <span class="username">{{remake.username}}
                     <span v-if="remake.lz" style="    font-size: 1.5vh;color: #519a8c;border: 1px solid #519a8c;padding: 0 .5vh;">楼主</span>
                 </span>
-                <div class="content">
+                <div class="content" >
                     {{remake.content}}
                 </div>
                   <div class="creatAt">评论于 {{remake.createdAt}}</div>
@@ -82,6 +83,7 @@ export default {
                     }
                 })
                 this.remakeList = res.data.remake
+            
                 console.log(this.remakeList)
             })
         }
@@ -150,7 +152,7 @@ export default {
             width: 100%;
             transform: translateY(-6vh);
             display: grid;
-            background-color: #d4d4d459;
+            background-color: #e8e8e8;
             grid-template-columns: 80% 20%;
             border-radius: 35px;
             input{

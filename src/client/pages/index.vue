@@ -3,9 +3,12 @@
     
     <div class="app full-height" @click='noActive()'>
       <div class="appbar">
-        <i class="iconfont icon-zk" @click="onActive()"></i>
-        <span class="title">Home</span>
-        <i class="iconfont icon-search"></i>
+        <i class="iconfont icon-zk" @click="onActive()"  v-if= '!isSearch'></i>
+        <span class="title" v-if= '!isSearch'>Home</span>
+        <i class="iconfont icon-search" @click="search()" :class="{searchActive:isSearch}">
+          <input type="text" v-if= 'isSearch' placeholder="想搜点啥?~">
+        </i>
+       
 
       </div>
      
@@ -127,7 +130,8 @@ export default {
       loveSelect:[],
       deleteBox:null,
       findBy:'findAllBlog',
-      userInfo
+      userInfo,
+      isSearch : false
     }
   },
   created(){
@@ -233,6 +237,10 @@ export default {
   },
   getUserInfo(data){
     this.userInfo = data
+  },
+  search(){
+    if(this.isSearch){ this.isSearch = false}
+    else{this.isSearch = true}
   }
   },
   computed:{
@@ -258,6 +266,11 @@ export default {
   0% {font-size:2vh;}
   50%{font-size: 2.2vh;}
   100% {font-size:2vh;}
+}
+.searchActive{
+    float: left!important;
+    margin-left: 2vh;
+    transition: all .7s;
 }
 .SwipeActive{
   transition: all .2s!important;
@@ -325,6 +338,7 @@ a{
       float: right;
       font-size: 2.5vh;
       margin-right: 2vh;
+      transition: all .7s;
     }
     #slide{
       background-color: red;
@@ -416,7 +430,7 @@ a{
 	  }
 	  .blogContent{
 		padding: 0 2vh;
-		color: #b5b5b5;
+    color: #888888;
 		line-height: 20px;
 		display: -webkit-box;
 		-webkit-box-orient: vertical;

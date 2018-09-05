@@ -9,6 +9,7 @@
         </div>
 
         <div class="blog" v-if='blog'>
+
             <div class="userinfo1" >
                 <img :src="blog.avatar" alt="" >
                 <span style="rgb(70, 70, 70);">{{blog.username}}</span>
@@ -17,9 +18,7 @@
             <div class="title">
                 {{blog.title}}
             </div>
-            <div class="content">
-                {{blog.content}}
-            </div>
+            <vue-markdown :source="blog.content" class="content"></vue-markdown>
         </div>
         
         <div class="remark" @click="popRemark()">
@@ -35,10 +34,12 @@
 <script>
 import popRemark from '../../client/components/popRemark'
 import {mapGetters} from   'vuex'
+import VueMarkdown from 'vue-markdown'
 
 export default {
     components:{
-        popRemark
+        popRemark,
+        VueMarkdown
     },
     data(){
         return {
@@ -82,7 +83,7 @@ export default {
 
 <style lang='less' scoped>
     .pane{
-        background: #63636394 !important;
+        background: #9e9e9e !important;
         z-index: -1;
         height: 100vh;
         top: 0;
@@ -129,8 +130,7 @@ export default {
 
     .blog{
         height: 92vh;
-        overflow: scroll;
-        padding: 0 1vh;
+        width:100%;
         .title{
             text-align: initial;
             padding: 0 1vh;
@@ -144,7 +144,11 @@ export default {
             line-height: 25px;
             text-align: initial;
             padding: 0 1vh;
-                color: #616161;
+            color: #616161;
+            overflow-y: scroll;
+            height: 74%;
+            z-index: -2;
+            position: relative;
         }
        
     }    
