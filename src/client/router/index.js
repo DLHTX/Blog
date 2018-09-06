@@ -10,7 +10,7 @@ import index from './../pages/index.vue'
 import Register from './../pages/Register.vue'
 import create from './../pages/create.vue'
 import blogDetail from './../pages/blogDetail.vue'
-
+import talk from './../pages/talk.vue'
 Vue.use(Router)
 
 var router = new Router({
@@ -21,6 +21,7 @@ var router = new Router({
     { name: 'index', path: '/', component: index },
     { name: 'create', path: '/create', component: create },
     { name: 'blogDetail', path: '/blogDetail', component: blogDetail },
+    { name: 'talk', path: '/talk', component: talk },
   ]
 })
 

@@ -12,6 +12,7 @@ import ElementUI from 'element-ui';
 import MintUI from 'mint-ui';
 import Share from 'vue-social-sharing'
 
+
 Vue.config.debug = true
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios

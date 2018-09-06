@@ -25,10 +25,15 @@
             <span>收藏</span>
             <i class="iconfont icon-youjiantou" style="float:right;"></i>
         </div>
-        <div class="boke">
+        <div class="boke"  @click="goMyBlog()">
             <i class="iconfont icon-blog "></i>
             <span>我的</span>
-            <i class="iconfont icon-youjiantou" style="float:right;"></i>
+            <i class="iconfont icon-youjiantou" style="float:right;" ></i>
+        </div>
+        <div class="boke"  @click="goTalk()">
+            <i class="iconfont icon-blog "></i>
+            <span>群聊</span>
+            <i class="iconfont icon-youjiantou" style="float:right;" ></i>
         </div>
         <div class="zhuxiao" v-if="isLogin" @click="onlogout()">
             <i class="iconfont icon-logout" style="color: #ff7979;"></i>
@@ -45,6 +50,8 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import CHAT from '../lib/client.js'
+
 export default {
     name: 'Slide',
     // props:[
@@ -63,6 +70,7 @@ export default {
     },
     mounted(){
         this.checkLogin()
+        CHAT.init()
     },
     methods:{
       ...mapActions([
@@ -89,6 +97,12 @@ export default {
           }else{
             this.$router.push({name:'create'})
           }
+      },
+      goMyBlog(){
+
+      },
+      goTalk(){
+           this.$router.push({name:'talk'})
       }
     },
 

@@ -115,13 +115,13 @@
             border: none;
             outline: none;
             width: 70%;
-           border-bottom: 1px solid #969696!important;
+            border-bottom: 1px solid #969696!important;
             padding: 1vh;
             margin: 2vh;
             transition: all .3s;
             &:focus{
-                 border-bottom: 1px solid #6cc372!important;
-                  transition: all .3s;
+                border-bottom: 1px solid #6cc372!important;
+                transition: all .3s;
             }
         }
         .loginBtn{
