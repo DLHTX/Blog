@@ -102,7 +102,11 @@ export default {
 
       },
       goTalk(){
-           this.$router.push({name:'talk'})
+          if(!this.isLogin){
+            this.$toast({ message:'尚未登录',duration:1000})
+          }else{
+            this.$router.push({name:'talk'})
+          }
       }
     },
 

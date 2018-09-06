@@ -56,8 +56,8 @@ export default {
                 }
             }
                 // this.addUserList(user)
-                // this.msg = ''
                 CHAT.submit(obj)
+                this.msg = ''
              }
     },
 

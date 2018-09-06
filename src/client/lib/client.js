@@ -16,7 +16,7 @@ const CHAT={
   },
   init:function(username){
     //连接websocket后端服务器
-    this.socket = io.connect('http://localhost:4041/',{'force new connection': true})
+    this.socket = io.connect('http://47.91.156.35:4041/',{'force new connection': true})
     this.socket.on('open', function() {
       console.log('已连接')
     })
