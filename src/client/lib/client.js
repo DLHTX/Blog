@@ -4,7 +4,7 @@ const CHAT={
   username:null,
   socket:null,
   msgArr:[],
-  newUser:null,
+  newUser:false,
   isSend : false,
   isRecive:false,
   submit:function(obj){
@@ -13,26 +13,24 @@ const CHAT={
     this.socket.emit('sendMsg', obj);
     this.isSend = false 
   },
-
-
   message: function(username) {
     if( this.isRecive) return
     this.isRecive = true 
     console.log('刷新消息...')
-      this.socket.on('to', function(obj) {
+    this.socket.on('to', function(obj) {
         CHAT.msgArr.push(obj)
-        // console.log('CHAT.msgArr',  CHAT.msgArr)
-      })
-      this.isRecive = false 
-      
-      this.socket.on('bordcast',(username)=>{
-        console.log(username)
-        this.newUser = username
-      })
+        console.log( JSON.stringify(CHAT.msgArr) +'来自client')
+    })
+    this.socket.on('bordcast',(username)=>{
+        console.log(username + '上线了 来自client.js')
+        this.newUser = true
+    })
+    this.isRecive = false 
+
   },
   init:function(username){
     //连接websocket后端服务器
-    this.socket = io.connect('http://192.168.100.106:4041/',{'force new connection': true})
+    this.socket = io.connect('http://localhost:4041/',{'force new connection': true})
     this.socket.on('open', function() {
       console.log('已连接')
     })
