@@ -4,37 +4,57 @@ const CHAT={
   username:null,
   socket:null,
   msgArr:[],
-  newUser:false,
   isSend : false,
   isRecive:false,
-  submit:function(obj){
+  UserCount:null,
+  submit(obj){
     if( this.isSend) return
     this.isSend = true 
     this.socket.emit('sendMsg', obj);
     this.isSend = false 
   },
-  message: function(username) {
+
+  message(username) {
     if( this.isRecive) return
     this.isRecive = true 
     console.log('刷新消息...')
+    let isOnto = false
     this.socket.on('to', function(obj) {
-        CHAT.msgArr.push(obj)
-        console.log( JSON.stringify(CHAT.msgArr) +'来自client')
-    })
-    this.socket.on('bordcast',(username)=>{
-        console.log(username + '上线了 来自client.js')
-        this.newUser = true
-    })
+      if(isOnto) return 
+      isOnto = true
+      CHAT.msgArr.push(obj)
+      isOnto = false
+        // console.log( JSON.stringify(CHAT.msgArr) +'来自client')
+    })//监听后端的消息
+
+    let isOnbordcast = false
+    this.socket.on('bordcast',(onlineCount)=>{
+      // if(isOnbordcast) return
+      // isOnbordcast = true 
+      this.UserCount = onlineCount
+      console.log('用户数人数'+onlineCount+   this.UserCount)
+      // isOnbordcast =false 
+    })//监听上线人数的消息
     this.isRecive = false 
 
   },
-  init:function(username){
+  init(username){
     //连接websocket后端服务器
     this.socket = io.connect('http://localhost:4041/',{'force new connection': true})
     this.socket.on('open', function() {
       console.log('已连接')
     })
+    this.socket.on('bordcast',(onlineCount)=>{
+      // if(isOnbordcast) return
+      // isOnbordcast = true 
+      this.UserCount = onlineCount
+      console.log('用户数人数'+onlineCount+   this.UserCount)
+      // isOnbordcast =false 
+    })//监听上线人数的消息
+
+
     this.socket.emit('addUser', username)
+    
   }
 }
 

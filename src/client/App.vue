@@ -26,15 +26,15 @@ export default {
 </script>
 <style>
 .mint-toast{
-    padding: 1vh 4vh;
-    border-radius: 33px;
-    position: absolute;
-    top: 2%;
-    left: 50%;
-    background-color: #6cc372;
-    color: white;
-    transform: translateX(-50%);
-    z-index: 999;
+  padding: 1vh 4vh;
+  border-radius: 33px;
+  position: absolute;
+  top: 2%;
+  left: 50%;
+  background-color: #de4545;
+  color: white;
+  transform: translateX(-50%);
+  z-index: 999;
 }
 html{
   height: 100%;

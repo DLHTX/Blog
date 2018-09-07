@@ -90,14 +90,15 @@ io.on('connection',socket=>{
     console.log(onlineUsers[username].id) //建立连接后 用户点击不同通讯录都是建立同样的socket对象
     console.log('在线人数：',onlineCount)
 
-    socket.broadcast.emit('bordcast',username)
+    socket.broadcast.emit('bordcast',onlineCount)//向所有用户广播不包含自己
 
     socket.on('sendMsg', function(obj) {
       console.log(obj)
       toUser = obj.toUser
       fromUser = obj.fromUser
       msg = obj.msg
-      socket.broadcast.emit('to',obj)
+      
+      socket.broadcast.emit('to',obj)//向所有用户广播不包含自己
       console.log(  '发送出去' + socket.emit('to',obj))
 
       socket.on("disconnect", function (username) {

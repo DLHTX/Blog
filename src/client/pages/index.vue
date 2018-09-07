@@ -126,7 +126,7 @@ export default {
   methods: {
     getAllblog(){
       this.$axios.post('/auth/' + this.findBy,{page:this.pageNum,pageSize:this.pageSize}).then(res=>{
-          console.log(res)
+          // //console.log(res)
           this.blogs = res.data.rows
       })
     },
@@ -139,17 +139,17 @@ export default {
       this.pageNum = 1
     },
     onActive(){
-      console.log('click')
+      //console.log('click')
       event.stopPropagation(); 
       this.isActive = true;
-      console.log(this.isActive)
+      // console.log(this.isActive)
     },
     noActive(){
       event.stopPropagation(); 
       this.isActive = false;
     },
     changeActive(data){
-      console.log('change!')
+      // console.log('change!')
       this.isActive = data
     },
     result(item,index){
@@ -168,7 +168,7 @@ export default {
         }
 	},
     love(index,id,lovenum){
-		  console.log(event.currentTarget)
+		  //console.log(event.currentTarget)
       if(this.loveSelect.indexOf(index) > -1){
           this.loveSelect.splice(this.loveSelect.indexOf(index),1)
           this.$axios.post('/auth/noloveBlog',{id:id}).then(res=>{
@@ -176,7 +176,7 @@ export default {
         })
       }else{
         this.loveSelect.push(index)
-        console.log(this.loveSelect)
+        //console.log(this.loveSelect)
         this.$axios.post('/auth/loveBlog',{id:id}).then(res=>{
 			this.blogs[index].love++
         })
@@ -191,10 +191,10 @@ export default {
     },
     longtap(index){
       this.deleteBox = index.deleteBox
-      console.log(this.deleteBox)
+      //console.log(this.deleteBox)
     },
     loadMore() {
-        console.log('loadMore')
+        //console.log('loadMore')
         if(this.allLoaded){
           this.moreLoading = true;
           return;
@@ -206,7 +206,7 @@ export default {
         this.pageNum++;
         
         this.$axios.post('/auth/'+ this.findBy,{page:this.pageNum,pageSize:this.pageSize}).then(res=>{
-            console.log(res)
+            //console.log(res)
             this.blogs = this.blogs.concat(res.data.rows)
             this.allLoaded = res.data.rows.length < this.pageSize;
             this.moreLoading = this.allLoaded;
@@ -217,7 +217,7 @@ export default {
 	  this.$toast({ message:'This is not your message',duration:1000})
 	},
 	goBlogDetail(id){
-    console.log(id)
+    //console.log(id)
      this.$router.push({path:'/blogDetail',query:{queryid:id,userInfo:this.userInfo}})
     // this.$router.push({name:'blogDetail',params:id})
 	},
@@ -241,7 +241,7 @@ export default {
 		}else{
 			this.topRefreshVal =''
 		}
-		console.log(status)
+		//console.log(status)
 	}
   },
   computed:{
