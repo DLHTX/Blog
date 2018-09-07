@@ -50,8 +50,6 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import CHAT from '../lib/client.js'
-
 export default {
     name: 'Slide',
     // props:[
@@ -70,7 +68,6 @@ export default {
     },
     mounted(){
         this.checkLogin()
-        CHAT.init()
     },
     methods:{
       ...mapActions([
