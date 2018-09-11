@@ -50,6 +50,8 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import CHAT from '../lib/client.js'
+
 export default {
     name: 'Slide',
     // props:[
@@ -68,6 +70,8 @@ export default {
     },
     mounted(){
         this.checkLogin()
+
+       
     },
     methods:{
       ...mapActions([
@@ -78,8 +82,9 @@ export default {
         event.stopPropagation(); 
       },
       onlogout(){
-            this.logout().then(res=>{
-                if(this.isLogin ){
+            CHAT.close(this.user.username)
+            this.logout().then(res=>{   
+                if(!this.isLogin ){
                     this.$toast({ message:'注销成功',duration:1000})
                 }
             })

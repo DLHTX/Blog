@@ -2,10 +2,10 @@
     <div style="height:100vh;overflow: hidden;">
         <div class="talkbar">
             <i class="iconfont icon-back" @click="goback()"></i>
-            <span>群聊({{Usercount}})</span>
+            <span>群聊</span>
         </div>
 
-        <div class="talkcontent" style=" height: 85%;overflow: scroll;">
+        <div class="talkcontent" style=" height: 85%;overflow: scroll;" ref="talkcontent">
             <div class="talk" :class="[(msg1.fromUser===user.username)?rightClass:leftClass]"  v-for= '(msg1,index) in CHAT' :key= "index" >
                 <div class="time">{{msg1.time}}</div>
                 <div class="talkBox">
@@ -41,36 +41,40 @@ export default {
     data(){
         return {
             msg:'',
-            CHAT:CHAT.msgArr,
+            CHAT:CHAT.msgArr,   
+            logUser:CHAT.logUser,
             username: '',
             rightClass:'rightClass',
             leftClass:'leftClass',
-            Usercount:CHAT.UserCount
+            Usercount: CHAT.UserCount,
+            randomColor:{
+                
+            }
         }
     },
     mounted(){
-        console.log(this.user.username +'上线了')
-        if(!this.user.username){
-            console.log('尚未登录,无法使用群聊功能')
-        }else{
-            CHAT.init(this.user.username)
-        }
+        CHAT.init(this.user.username)
         CHAT.message(this.user.username)
-        // if(this.CHAT.newUser){
-        //     this.$toast({ message:`${this.CHAT.newUser}上线了`,duration:1000})
-        //     this.CHAT.newUser = []
-        //     console.log(this.CHAT.newUser + ' 来自talk.vue')
-        // }
+        this.$watch("CHAT", (newValue, oldValue)=> {
+            console.log('CHAT发生变化')
+            this.$refs.talkcontent.scrollTop =  this.$refs.talkcontent.scrollHeight;
+        })
+        this.$watch("logUser", (newValue, oldValue)=> {
+            console.log('有人上线了',this.logUser)
+            this.$toast({ message:`${this.logUser[0]}上线了`,duration:1000})
+        })
+
       
     },
     methods:{
         goback(){
             this.$router.push('/')
-            CHAT.disconnect(this.user.username)
+            // CHAT.disconnect(this.user.username)
         },
+        
         submit(){
             var date = new Date()
-            var time = date.getHours() + ':' + date.getMinutes()
+            var time = date.getHours() + ':' + date.getMinutes() +':' + date.getSeconds()
             var obj = {
                 time: time,
                 msg: this.msg,
@@ -78,8 +82,11 @@ export default {
                 avatar: this.user.avatar,
                 fromUser: this.user.username
                 }
-            CHAT.submit(obj)
-            this.msg = ''
+            if(obj.msg === ''){this.$toast({ message:'内容不可为空',duration:1000})}else{
+                CHAT.submit(obj)
+                this.msg = ''
+            }
+           
         }
     },
     computed:{
@@ -128,7 +135,7 @@ export default {
             .text{
                 grid-row: 2 / span1;
                 grid-column: 2 / span1;
-                background: linear-gradient(to right, #d2d7f9, #b2bbff);
+                background: linear-gradient(to right, #cbd0f9, #eac0fd);
                 display: inline;
                 align-self: center;
                 justify-self: baseline;
@@ -143,7 +150,7 @@ export default {
                     width: 0;
                     height: 0;
                     border-bottom: 5px solid transparent;
-                    border-right: 5px solid #e8e9e8;
+                    border-right: 5px solid #cbd0f9;
                 }
             }
         }

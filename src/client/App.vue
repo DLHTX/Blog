@@ -46,6 +46,7 @@ body {
   margin: 0!important;
   user-select:none!important;
   padding: 0!important;
+  overflow: hidden;
 }
 input{
   text-decoration: none;
